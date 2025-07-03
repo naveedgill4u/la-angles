@@ -47,7 +47,6 @@ la_tracts %>%
 ```{r}
 #| message: false
 #| warning: false
-#| results: hide
 la_bachelor_map <- get_acs(
   geography = "tract",
   variables = c(
@@ -61,7 +60,6 @@ la_bachelor_map <- get_acs(
   output = "wide",
   geometry = TRUE
 )
-
 # Calculate percentage
 la_bachelor_map <- la_bachelor_map %>%
   mutate(percent_bachelor = 100 * bachelorE / totalE)
