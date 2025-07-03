@@ -47,6 +47,7 @@ la_tracts %>%
 ```{r}
 #| message: false
 #| warning: false
+#| results: hide
 la_bachelor_map <- get_acs(
   geography = "tract",
   variables = c(
@@ -67,6 +68,11 @@ la_bachelor_map <- la_bachelor_map %>%
 # Create color palette
 pal <- colorBin("YlGnBu", domain = la_bachelor_map$percent_bachelor, bins = 6)
 
+```
+
+```{r}
+#| message: false
+#| warning: false
 # Create leaflet map
 leaflet(la_bachelor_map) %>%
   addProviderTiles("CartoDB.Positron") %>%

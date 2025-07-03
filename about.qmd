@@ -1,5 +1,6 @@
 ---
 title: "About"
+author: Naveed Ahmad
 ---
 
-This site is designed using AI.
+This site will give you information about education at graduation level in the form of a map. Data set of Census tracts has been used for analysis and drawing map. All the code has been guided by AI.
