@@ -1,0 +1,94 @@
+---
+title: "Las Angles Education"
+author: "Naveed Ahmad"
+execute: 
+  echo: false
+  
+---
+
+```{r #| message: false #| warning: false}
+
+library(tidycensus)
+library(tidyverse)
+library(leaflet)
+library(sf)
+```
+```{r}
+la_tracts <- get_acs(
+  geography = "tract",
+  variables = c(
+    total = "B15003_001",      # Total population 25+ years
+    bachelor = "B15003_022"    # Population with bachelor's degree
+  ),
+  state = "CA",
+  county = "Los Angeles",
+  year = 2020,
+  survey = "acs5",
+  output = "wide"
+)
+
+# Calculate percentage of bachelor's degree holders
+la_tracts <- la_tracts %>%
+  mutate(percent_bachelor = 100 * bachelorE / totalE)
+
+# View results
+la_tracts %>%
+  select(GEOID, NAME, percent_bachelor) %>%
+  arrange(desc(percent_bachelor)) %>%
+  head(10)
+
+```
+
+```{r}
+la_bachelor_map <- get_acs(
+  geography = "tract",
+  variables = c(
+    total = "B15003_001",      # Total population 25+
+    bachelor = "B15003_022"    # Bachelor's degree
+  ),
+  state = "CA",
+  county = "Los Angeles",
+  year = 2020,
+  survey = "acs5",
+  output = "wide",
+  geometry = TRUE
+)
+
+# Calculate percentage
+la_bachelor_map <- la_bachelor_map %>%
+  mutate(percent_bachelor = 100 * bachelorE / totalE)
+
+# Create color palette
+pal <- colorBin("YlGnBu", domain = la_bachelor_map$percent_bachelor, bins = 6)
+
+# Create leaflet map
+leaflet(la_bachelor_map) %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addPolygons(
+    fillColor = ~pal(percent_bachelor),
+    weight = 0.5,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlight = highlightOptions(
+      weight = 2,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.9,
+      bringToFront = TRUE
+    ),
+    label = ~paste0(NAME, ": ", round(percent_bachelor, 1), "%"),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "13px",
+      direction = "auto"
+    )
+  ) %>%
+  addLegend(pal = pal, values = ~percent_bachelor,
+            opacity = 0.7, title = "% Bachelor's Degree",
+            position = "bottomright")
+
+```
+
+The image shows data about the percentage of people with a Bachelor's degree across census tracts in Los Angeles County. On the top portion of the screen, a series of horizontal progress bars illustrate very high percentages (ranging from 95% to 100%) of educational attainment in selected tracts. Below that, a leaflet map is embedded, providing an interactive spatial visualization of the same data.
