@@ -3,4 +3,4 @@ title: "Los Angles Education"
 author: Naveddd Ahmad
 ---
 
-This was created by using AI tool
+This site is designed using AI.
